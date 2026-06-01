@@ -1,12 +1,12 @@
 # Product Search API
 
-Search millions of products across thousands of stores.
+Search millions of products across thousands of stores instantly.
 
 ---
 
-## Before You Start
+## Requirements
 
-You need Docker. If you don't have it:
+Docker must be installed on your machine.
 - Mac / Windows → https://www.docker.com/products/docker-desktop
 - Linux → `sudo apt install docker.io`
 
@@ -14,25 +14,25 @@ You need Docker. If you don't have it:
 
 ## Step 1 — Start the API
 
-Copy and run this command. Replace `YOUR_LICENSE_KEY` with the key you received after purchase:
+Replace `YOUR_LICENSE_KEY` with the key provided after purchase:
 
 ```bash
 docker run -d --name product-search-api --restart unless-stopped -p 8000:8000 -e CHANNEL3_API_KEY=YOUR_LICENSE_KEY napeir/product-search-api:latest
 ```
 
-Check it's running:
+Confirm it's running:
 
 ```bash
 curl http://localhost:8000/health
 ```
 
-Expected: `{"status":"ok"}`
+Expected response: `{"status":"ok"}`
 
 ---
 
-## Step 2 — Generate Your API Key
+## Step 2 — Create Your Account
 
-Run this once. Use your own email and a password you choose:
+Run this once with your own email and password:
 
 ```bash
 curl -X POST http://localhost:8000/auth/register -H "Content-Type: application/json" -d '{"email": "you@example.com", "password": "yourpassword"}'
@@ -44,13 +44,15 @@ Response:
 {
   "message": "Account created",
   "email": "you@example.com",
-  "api_key": "sk-xxxxxxxxxxxxxxxx"
+  "api_key": "sk-xxxxxxxxxxxxxxxxxxxxxxxx"
 }
 ```
 
-**Copy your `api_key`. You will use it in every request.**
+**Save your `api_key`. You need it for every request.**
 
-Lost it? Get it back anytime:
+---
+
+## Step 3 — Retrieve Your Key (if lost)
 
 ```bash
 curl -X POST http://localhost:8000/auth/login -H "Content-Type: application/json" -d '{"email": "you@example.com", "password": "yourpassword"}'
@@ -58,28 +60,26 @@ curl -X POST http://localhost:8000/auth/login -H "Content-Type: application/json
 
 ---
 
-## Step 3 — Test It
+## Step 4 — Make Your First Search
 
-Replace `YOUR_API_KEY` with the key from above:
+Replace `YOUR_API_KEY` with the key from Step 2:
 
 ```bash
 curl -X POST http://localhost:8000/search -H "Content-Type: application/json" -H "x-api-key: YOUR_API_KEY" -d '{"query": "nike shoes", "limit": 5}'
 ```
 
-You should get back a list of products with titles, images, prices, and store links.
-
 ---
 
-## All Commands
+## All Search Commands
 
-**Search by text**
+**Basic search**
 ```bash
 curl -X POST http://localhost:8000/search -H "Content-Type: application/json" -H "x-api-key: YOUR_API_KEY" -d '{"query": "white sneakers", "limit": 10}'
 ```
 
 **In stock only**
 ```bash
-curl -X POST http://localhost:8000/search -H "Content-Type: application/json" -H "x-api-key: YOUR_API_KEY" -d '{"query": "white sneakers", "limit": 10, "filters": {"availability": ["InStock"]}}'
+curl -X POST http://localhost:8000/search -H "Content-Type: application/json" -H "x-api-key: YOUR_API_KEY" -d '{"query": "white sneakers", "filters": {"availability": ["InStock"]}}'
 ```
 
 **With price range**
@@ -87,29 +87,29 @@ curl -X POST http://localhost:8000/search -H "Content-Type: application/json" -H
 curl -X POST http://localhost:8000/search -H "Content-Type: application/json" -H "x-api-key: YOUR_API_KEY" -d '{"query": "running shoes", "filters": {"availability": ["InStock"], "price": {"min_price": 50, "max_price": 150}}}'
 ```
 
-**By gender**
+**Filter by gender**
 ```bash
 curl -X POST http://localhost:8000/search -H "Content-Type: application/json" -H "x-api-key: YOUR_API_KEY" -d '{"query": "sneakers", "filters": {"gender": "male"}}'
 ```
 
-**By image URL**
+**Filter by specific stores**
+```bash
+curl -X POST http://localhost:8000/search -H "Content-Type: application/json" -H "x-api-key: YOUR_API_KEY" -d '{"query": "nike shoes", "filters": {"website_ids": ["nike.com", "adidas.com"]}}'
+```
+
+**Filter by brand**
+```bash
+curl -X POST http://localhost:8000/search -H "Content-Type: application/json" -H "x-api-key: YOUR_API_KEY" -d '{"query": "shoes", "filters": {"brand_ids": ["nike", "adidas"]}}'
+```
+
+**Search by image URL**
 ```bash
 curl -X POST http://localhost:8000/search -H "Content-Type: application/json" -H "x-api-key: YOUR_API_KEY" -d '{"image_url": "https://example.com/shoe.jpg"}'
 ```
 
-**Product detail** (use an `id` from any search result)
+**Set country and currency**
 ```bash
-curl http://localhost:8000/products/PRODUCT_ID -H "x-api-key: YOUR_API_KEY"
-```
-
-**Similar products**
-```bash
-curl http://localhost:8000/products/PRODUCT_ID/similar -H "x-api-key: YOUR_API_KEY"
-```
-
-**Lookup by store URL**
-```bash
-curl "http://localhost:8000/lookup?url=https://www.nike.com/t/air-max-90" -H "x-api-key: YOUR_API_KEY"
+curl -X POST http://localhost:8000/search -H "Content-Type: application/json" -H "x-api-key: YOUR_API_KEY" -d '{"query": "shoes", "config": {"country": "GB", "currency": "GBP"}}'
 ```
 
 **Next page of results**
@@ -119,34 +119,45 @@ curl -X POST http://localhost:8000/search -H "Content-Type: application/json" -H
 
 ---
 
-## Filter Options
+## Product Endpoints
 
-| Filter | What it does | Example |
-|---|---|---|
-| `availability` | In stock or not | `["InStock"]` |
-| `price` | Price range | `{"min_price": 50, "max_price": 200}` |
-| `gender` | Filter by gender | `"male"` or `"female"` |
-| `website_ids` | Specific stores only | `["nike.com", "adidas.com"]` |
-| `brand_ids` | Specific brands only | `["nike", "adidas"]` |
-| `condition` | New or used | `"new"` or `"used"` |
-
-## Config Options
-
-| Config | What it does | Example |
-|---|---|---|
-| `country` | Store region | `"US"`, `"GB"`, `"DE"` |
-| `currency` | Price currency | `"USD"`, `"GBP"`, `"EUR"` |
-| `language` | Result language | `"en"`, `"de"`, `"fr"` |
-
-Example using config:
-
+**Get full product detail** (use an `id` from any search result)
 ```bash
-curl -X POST http://localhost:8000/search -H "Content-Type: application/json" -H "x-api-key: YOUR_API_KEY" -d '{"query": "shoes", "filters": {"availability": ["InStock"]}, "config": {"country": "GB", "currency": "GBP"}}'
+curl http://localhost:8000/products/PRODUCT_ID -H "x-api-key: YOUR_API_KEY"
+```
+
+**Get similar products**
+```bash
+curl http://localhost:8000/products/PRODUCT_ID/similar -H "x-api-key: YOUR_API_KEY"
+```
+
+**Lookup any product page URL**
+```bash
+curl "http://localhost:8000/lookup?url=https://www.nike.com/t/air-max-90" -H "x-api-key: YOUR_API_KEY"
 ```
 
 ---
 
-## What a Response Looks Like
+## Filter & Config Reference
+
+| Filter | Type | Example |
+|---|---|---|
+| `availability` | list | `["InStock"]` |
+| `price` | object | `{"min_price": 50, "max_price": 200}` |
+| `gender` | string | `"male"` or `"female"` |
+| `brand_ids` | list | `["nike", "adidas"]` |
+| `website_ids` | list | `["nike.com", "zappos.com"]` |
+| `condition` | string | `"new"` or `"used"` |
+
+| Config | Type | Example |
+|---|---|---|
+| `country` | string | `"US"`, `"GB"`, `"DE"` |
+| `currency` | string | `"USD"`, `"GBP"`, `"EUR"` |
+| `language` | string | `"en"`, `"de"`, `"fr"` |
+
+---
+
+## Example Response
 
 ```json
 {
@@ -154,12 +165,13 @@ curl -X POST http://localhost:8000/search -H "Content-Type: application/json" -H
     {
       "id": "VIpe8QG",
       "title": "Gazelle Shoes",
-      "description": "Classic sneakers with suede upper and gum sole.",
-      "brands": [{ "name": "Adidas" }],
+      "description": "Classic sneakers with suede upper...",
+      "brands": [{"name": "Adidas"}],
       "images": [
         {
           "url": "https://cdn.example.com/shoe.jpg",
-          "is_main_image": true
+          "is_main_image": true,
+          "shot_type": "hero"
         }
       ],
       "gender": "male",
@@ -168,7 +180,7 @@ curl -X POST http://localhost:8000/search -H "Content-Type: application/json" -H
         {
           "domain": "adidas.com",
           "url": "https://www.adidas.com/...",
-          "price": { "price": 100.0, "currency": "USD" },
+          "price": {"price": 100.0, "currency": "USD"},
           "availability": "InStock"
         }
       ],
@@ -183,15 +195,16 @@ curl -X POST http://localhost:8000/search -H "Content-Type: application/json" -H
 }
 ```
 
+**Tips:**
 - Use `is_main_image: true` to get the primary product image
-- `offers` lists every store selling the product with live price and availability
-- `next_page_token` is `null` when there are no more results
+- `offers` lists every store selling the product — sort by price to show the cheapest
+- `next_page_token` is `null` when there are no more pages
 
 ---
 
 ## Interactive Docs
 
-Your API has a built-in docs page where you can try every endpoint in the browser:
+Open in your browser to explore and test every endpoint visually:
 
 ```
 http://localhost:8000/docs
@@ -208,7 +221,7 @@ docker stop product-search-api
 # Start it again
 docker start product-search-api
 
-# See logs
+# View logs
 docker logs product-search-api
 
 # Update to latest version
@@ -220,12 +233,12 @@ docker run -d --name product-search-api --restart unless-stopped -p 8000:8000 -e
 
 ---
 
-## Errors
+## Error Reference
 
 | Code | Meaning | Fix |
 |---|---|---|
-| `401` | Missing or wrong API key | Check the `x-api-key` header |
-| `409` | Email already registered | Use a different email or login instead |
+| `401` | Missing or invalid API key | Check your `x-api-key` header |
+| `409` | Email already registered | Login instead to retrieve your key |
 | `422` | Bad request | Include `query`, `image_url`, or `base64_image` |
 | `504` | Timeout | Retry the request |
 | `502` | Server error | Retry in a few seconds |

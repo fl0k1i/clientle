@@ -35,3 +35,13 @@ class SearchRequest(BaseModel):
     filters: SearchFilters = SearchFilters()
     config: SearchConfig = SearchConfig()
     
+
+from pydantic import EmailStr
+
+class RegisterRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
