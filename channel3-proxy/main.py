@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, Path, Query, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from contextlib import asynccontextmanager
 
 from schemas import SearchRequest, RegisterRequest, LoginRequest
@@ -27,6 +28,11 @@ def http_error(e):
     if isinstance(e, TimeoutError): return HTTPException(504, str(e))
     if isinstance(e, ConnectionError): return HTTPException(502, str(e))
     return HTTPException(500, str(e))
+
+
+@app.get("/")
+def landing():
+    return FileResponse("index.html")
 
 
 @app.get("/health")
