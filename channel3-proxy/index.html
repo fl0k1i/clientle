@@ -1,276 +1,788 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Product Search API</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>EasyCommerce</title>
+
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  body {
-    background: #fff;
-    color: #000;
-    font-family: monospace;
-    font-size: 14px;
-    max-width: 640px;
-    margin: 0 auto;
-    padding: 60px 24px;
-    line-height: 1.6;
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  background:#f5f5f5;
+  color:#000;
+  font-family:monospace;
+  padding:40px 24px 80px;
+}
+
+.container{
+  max-width:1400px;
+  margin:0 auto;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:60px;
+  flex-wrap:wrap;
+  gap:20px;
+}
+
+.logo{
+  border:1px solid #000;
+  background:#fff;
+  padding:8px 12px;
+  font-size:12px;
+}
+
+.status{
+  color:green;
+  font-size:12px;
+}
+
+.hero{
+  margin-bottom:60px;
+}
+
+.hero h1{
+  font-size:72px;
+  line-height:.92;
+  letter-spacing:-4px;
+  margin-bottom:24px;
+}
+
+.hero p{
+  max-width:700px;
+  color:#555;
+  font-size:18px;
+  line-height:1.7;
+}
+
+.badges{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:30px;
+}
+
+.badge{
+  border:1px solid #000;
+  background:#fff;
+  padding:10px 14px;
+  font-size:12px;
+}
+
+.layout{
+  display:grid;
+  grid-template-columns:420px 1fr;
+  gap:28px;
+}
+
+@media(max-width:1000px){
+
+  .layout{
+    grid-template-columns:1fr;
   }
 
-  h1 { font-size: 24px; font-weight: bold; margin-bottom: 8px; }
-  p { color: #555; margin-bottom: 32px; }
-
-  hr { border: none; border-top: 1px solid #e0e0e0; margin: 40px 0; }
-
-  .tabs { display: flex; gap: 0; margin-bottom: 24px; border-bottom: 1px solid #000; }
-  .tab {
-    padding: 8px 20px;
-    cursor: pointer;
-    font-family: monospace;
-    font-size: 13px;
-    background: none;
-    border: none;
-    border-bottom: 2px solid transparent;
-    margin-bottom: -1px;
-    color: #999;
-  }
-  .tab.active { color: #000; border-bottom-color: #000; font-weight: bold; }
-
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
-
-  label { display: block; font-size: 12px; color: #999; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
-
-  input {
-    width: 100%;
-    border: 1px solid #ccc;
-    padding: 10px 12px;
-    font-family: monospace;
-    font-size: 14px;
-    margin-bottom: 14px;
-    outline: none;
-    border-radius: 0;
-  }
-  input:focus { border-color: #000; }
-
-  button {
-    width: 100%;
-    padding: 11px;
-    background: #000;
-    color: #fff;
-    font-family: monospace;
-    font-size: 14px;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-  }
-  button:hover { background: #222; }
-  button:disabled { background: #999; cursor: not-allowed; }
-
-  .result { margin-top: 20px; display: none; }
-  .result.show { display: block; }
-
-  .key-box {
-    border: 1px solid #000;
-    padding: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    background: #f9f9f9;
-    word-break: break-all;
-  }
-  .key-box code { font-size: 12px; flex: 1; }
-
-  .copy {
-    width: auto;
-    padding: 6px 14px;
-    background: #000;
-    color: #fff;
-    font-size: 12px;
-    white-space: nowrap;
-    flex-shrink: 0;
+  .hero h1{
+    font-size:48px;
   }
 
-  .msg-ok { color: green; font-size: 12px; margin-top: 8px; }
-  .msg-err { color: red; font-size: 12px; margin-top: 8px; display: none; }
-  .msg-err.show { display: block; }
+}
 
-  h2 { font-size: 15px; margin-bottom: 16px; }
+.sidebar{
+  display:flex;
+  flex-direction:column;
+  gap:24px;
+}
 
-  pre {
-    background: #f5f5f5;
-    border: 1px solid #e0e0e0;
-    padding: 16px;
-    font-size: 12px;
-    overflow-x: auto;
-    line-height: 1.8;
-    margin-bottom: 16px;
-    white-space: pre-wrap;
-    word-break: break-all;
-  }
+.card{
+  background:#fff;
+  border:1px solid #ddd;
+  padding:24px;
+}
 
-  .endpoint-label { font-size: 12px; color: #999; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+.card-title{
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:#666;
+  margin-bottom:18px;
+}
+
+.auth-tabs{
+  display:flex;
+  gap:10px;
+  margin-bottom:18px;
+}
+
+.auth-tab{
+  border:1px solid #000;
+  background:#fff;
+  padding:10px 14px;
+  cursor:pointer;
+  font-size:12px;
+}
+
+.auth-tab.active{
+  background:#000;
+  color:#fff;
+}
+
+input{
+  width:100%;
+  border:1px solid #ccc;
+  background:#fff;
+  padding:16px;
+  margin-bottom:14px;
+  font-family:monospace;
+  font-size:14px;
+  outline:none;
+}
+
+input:focus{
+  border-color:#000;
+}
+
+button{
+  width:100%;
+  border:none;
+  background:#000;
+  color:#fff;
+  padding:16px;
+  cursor:pointer;
+  font-family:monospace;
+  font-size:14px;
+}
+
+button:hover{
+  opacity:.92;
+}
+
+button:disabled{
+  opacity:.5;
+}
+
+.examples{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:18px;
+}
+
+.example{
+  border:1px solid #000;
+  background:#fff;
+  padding:10px 12px;
+  cursor:pointer;
+  font-size:12px;
+}
+
+.example:hover{
+  background:#000;
+  color:#fff;
+}
+
+.key-box{
+  margin-top:18px;
+  border:1px solid #000;
+  background:#fafafa;
+  padding:14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+}
+
+.key-box code{
+  flex:1;
+  word-break:break-all;
+  font-size:12px;
+}
+
+.copy-btn{
+  width:auto;
+  background:#fff;
+  color:#000;
+  border:1px solid #000;
+  padding:8px 12px;
+  font-size:12px;
+}
+
+.copy-btn:hover{
+  background:#000;
+  color:#fff;
+}
+
+.response-panel{
+  background:#fff;
+  border:1px solid #ddd;
+  padding:24px;
+  min-height:720px;
+}
+
+.response-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:28px;
+}
+
+.response-title{
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:#666;
+}
+
+.live{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:green;
+  font-size:12px;
+}
+
+.dot{
+  width:8px;
+  height:8px;
+  background:green;
+  border-radius:50%;
+}
+
+.block{
+  margin-bottom:28px;
+}
+
+.block-label{
+  font-size:12px;
+  color:#666;
+  text-transform:uppercase;
+  margin-bottom:12px;
+}
+
+pre{
+  background:#fafafa;
+  border:1px solid #ddd;
+  padding:22px;
+  overflow:auto;
+  font-size:12px;
+  line-height:1.8;
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+
+.json-box{
+  height:520px;
+}
+
+.error{
+  margin-top:10px;
+  font-size:12px;
+  color:red;
+}
+
+.success{
+  margin-top:12px;
+  font-size:12px;
+  color:green;
+}
+
+.footer{
+  margin-top:70px;
+  padding-top:24px;
+  border-top:1px solid #ddd;
+  color:#777;
+  font-size:12px;
+}
+
 </style>
 </head>
+
 <body>
 
-<h1>Product Search API</h1>
-<p>Search millions of products. Register below to get your API key.</p>
+<div class="container">
 
-<div class="tabs">
-  <button class="tab active" onclick="switchTab('register', this)">Register</button>
-  <button class="tab" onclick="switchTab('login', this)">Login</button>
-</div>
+  <div class="topbar">
 
-<!-- REGISTER -->
-<div class="tab-content active" id="tab-register">
-  <label>Email</label>
-  <input type="email" id="reg-email" placeholder="you@example.com">
-  <label>Password</label>
-  <input type="password" id="reg-password" placeholder="Min 8 characters">
-  <button id="reg-btn" onclick="register()">Get API Key</button>
-  <div class="msg-err" id="reg-err"></div>
-  <div class="result" id="reg-result">
-    <div class="key-box">
-      <code id="reg-key"></code>
-      <button class="copy" onclick="copy('reg-key', this)">Copy</button>
+    <div class="logo">
+      EASYCOMMERCE
     </div>
-    <div class="msg-ok">Account created. Save this key — use it on every request.</div>
-  </div>
-</div>
 
-<!-- LOGIN -->
-<div class="tab-content" id="tab-login">
-  <label>Email</label>
-  <input type="email" id="login-email" placeholder="you@example.com">
-  <label>Password</label>
-  <input type="password" id="login-password" placeholder="Your password">
-  <button id="login-btn" onclick="login()">Retrieve API Key</button>
-  <div class="msg-err" id="login-err"></div>
-  <div class="result" id="login-result">
-    <div class="key-box">
-      <code id="login-key"></code>
-      <button class="copy" onclick="copy('login-key', this)">Copy</button>
+    <div class="status">
+      API STATUS ● ONLINE
     </div>
-    <div class="msg-ok">Here is your API key.</div>
+
   </div>
+
+  <div class="hero">
+
+    <h1>
+      Commerce API<br/>
+      for AI Agents
+    </h1>
+
+    <p>
+      Plug 100Mn+ products into your AI apps,
+      copilots and shopping agents.
+      Generate API keys, authenticate users,
+      and test live product search instantly.
+    </p>
+
+    <div class="badges">
+      <div class="badge">100Mn+ Products</div>
+      <div class="badge">Live Playground</div>
+      <div class="badge">JSON Responses</div>
+      <div class="badge">Checkout Ready</div>
+    </div>
+
+  </div>
+
+  <div class="layout">
+
+    <!-- LEFT -->
+    <div class="sidebar">
+
+      <!-- AUTH -->
+      <div class="card">
+
+        <div class="card-title">
+          Authentication
+        </div>
+
+        <div class="auth-tabs">
+
+          <div
+            class="auth-tab active"
+            id="register-tab"
+            onclick="switchAuth('register')"
+          >
+            Register
+          </div>
+
+          <div
+            class="auth-tab"
+            id="login-tab"
+            onclick="switchAuth('login')"
+          >
+            Login
+          </div>
+
+        </div>
+
+        <input
+          type="email"
+          id="email"
+          placeholder="you@example.com"
+        />
+
+        <input
+          type="password"
+          id="password"
+          placeholder="password"
+        />
+
+        <button
+          onclick="handleAuth()"
+          id="auth-btn"
+        >
+          Generate API Key
+        </button>
+
+        <div id="auth-error" class="error"></div>
+
+        <div
+          id="auth-success"
+          style="display:none;"
+        >
+
+          <div class="key-box">
+
+            <code id="api-key"></code>
+
+            <button
+              class="copy-btn"
+              onclick="copyKey(this)"
+            >
+              Copy
+            </button>
+
+          </div>
+
+          <div class="success">
+            API key ready
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- PLAYGROUND -->
+      <div class="card">
+
+        <div class="card-title">
+          Live Playground
+        </div>
+
+        <div class="examples">
+
+          <div
+            class="example"
+            onclick="setQuery('nike shoes')"
+          >
+            nike shoes
+          </div>
+
+          <div
+            class="example"
+            onclick="setQuery('iphone 15')"
+          >
+            iphone 15
+          </div>
+
+          <div
+            class="example"
+            onclick="setQuery('black hoodie')"
+          >
+            black hoodie
+          </div>
+
+          <div
+            class="example"
+            onclick="setQuery('wireless headphones')"
+          >
+            headphones
+          </div>
+
+        </div>
+
+        <input
+          id="query"
+          placeholder="Search products..."
+        />
+
+        <button
+          onclick="searchProducts()"
+          id="search-btn"
+        >
+          Search Products
+        </button>
+
+        <div id="search-error" class="error"></div>
+
+      </div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="response-panel">
+
+      <div class="response-head">
+
+        <div class="response-title">
+          Live API Response
+        </div>
+
+        <div class="live">
+
+          <div class="dot"></div>
+
+          ONLINE
+
+        </div>
+
+      </div>
+
+      <div class="block">
+
+        <div class="block-label">
+          Request
+        </div>
+
+<pre id="request-box">POST /search
+
+{
+  "query":"nike shoes",
+  "limit":10
+}</pre>
+
+      </div>
+
+      <div class="block">
+
+        <div class="block-label">
+          JSON Response
+        </div>
+
+<pre id="response-box" class="json-box">{
+  "products": []
+}</pre>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="footer">
+    EasyCommerce • Agentic commerce infrastructure
+  </div>
+
 </div>
-
-<hr>
-
-<h2>How to use your key</h2>
-
-<div class="endpoint-label">Search products</div>
-<pre>curl -X POST http://localhost:8000/search \
-  -H "Content-Type: application/json" \
-  -H "x-api-key: YOUR_API_KEY" \
-  -d '{"query": "nike shoes", "limit": 10}'</pre>
-
-<div class="endpoint-label">In stock only</div>
-<pre>curl -X POST http://localhost:8000/search \
-  -H "Content-Type: application/json" \
-  -H "x-api-key: YOUR_API_KEY" \
-  -d '{"query": "shoes", "filters": {"availability": ["InStock"]}}'</pre>
-
-<div class="endpoint-label">Product detail</div>
-<pre>curl http://localhost:8000/products/PRODUCT_ID \
-  -H "x-api-key: YOUR_API_KEY"</pre>
-
-<div class="endpoint-label">Similar products</div>
-<pre>curl http://localhost:8000/products/PRODUCT_ID/similar \
-  -H "x-api-key: YOUR_API_KEY"</pre>
-
-<div class="endpoint-label">Lookup by URL</div>
-<pre>curl "http://localhost:8000/lookup?url=https://nike.com/..." \
-  -H "x-api-key: YOUR_API_KEY"</pre>
-
-<hr>
-
-<div style="color:#999;font-size:12px;">Full docs → <a href="/docs" style="color:#000;">/docs</a></div>
 
 <script>
-  const API = '';
 
-  function switchTab(name, el) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    el.classList.add('active');
-    document.getElementById('tab-' + name).classList.add('active');
+const API =
+"https://verbose-rotary-phone-wv99xw5jpgw2wj6-8000.app.github.dev";
+
+let API_KEY =
+localStorage.getItem("easycommerce_api_key") || "";
+
+let AUTH_MODE = "register";
+
+window.addEventListener("DOMContentLoaded", () => {
+
+  if(API_KEY){
+
+    document.getElementById("api-key")
+      .innerText = API_KEY;
+
+    document.getElementById("auth-success")
+      .style.display = "block";
+
   }
 
-  async function register() {
-    const email = document.getElementById('reg-email').value.trim();
-    const pass = document.getElementById('reg-password').value;
-    const btn = document.getElementById('reg-btn');
-    const err = document.getElementById('reg-err');
-    const result = document.getElementById('reg-result');
+});
 
-    err.classList.remove('show');
-    result.classList.remove('show');
+function switchAuth(mode){
 
-    if (!email || !pass) return showErr('reg-err', 'Email and password required');
-    if (pass.length < 8) return showErr('reg-err', 'Password must be at least 8 characters');
+  AUTH_MODE = mode;
 
-    btn.disabled = true; btn.textContent = 'Creating...';
-    try {
-      const res = await fetch(`${API}/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password: pass })
-      });
-      const data = await res.json();
-      if (!res.ok) showErr('reg-err', data.detail || 'Error');
-      else { document.getElementById('reg-key').textContent = data.api_key; result.classList.add('show'); }
-    } catch { showErr('reg-err', 'Cannot connect to API'); }
-    btn.disabled = false; btn.textContent = 'Get API Key';
+  document.getElementById("register-tab")
+    .classList.remove("active");
+
+  document.getElementById("login-tab")
+    .classList.remove("active");
+
+  document.getElementById(`${mode}-tab`)
+    .classList.add("active");
+
+  document.getElementById("auth-btn")
+    .innerText =
+    mode === "register"
+    ? "Generate API Key"
+    : "Retrieve API Key";
+}
+
+async function handleAuth(){
+
+  document.getElementById("auth-error")
+    .innerText = "";
+
+  const email =
+    document.getElementById("email")
+    .value
+    .trim();
+
+  const password =
+    document.getElementById("password")
+    .value
+    .trim();
+
+  if(!email || !password){
+
+    document.getElementById("auth-error")
+      .innerText =
+      "email and password required";
+
+    return;
   }
 
-  async function login() {
-    const email = document.getElementById('login-email').value.trim();
-    const pass = document.getElementById('login-password').value;
-    const btn = document.getElementById('login-btn');
-    const err = document.getElementById('login-err');
-    const result = document.getElementById('login-result');
+  const endpoint =
+    AUTH_MODE === "register"
+    ? "/auth/register"
+    : "/auth/login";
 
-    err.classList.remove('show');
-    result.classList.remove('show');
+  const btn =
+    document.getElementById("auth-btn");
 
-    if (!email || !pass) return showErr('login-err', 'Email and password required');
+  btn.disabled = true;
 
-    btn.disabled = true; btn.textContent = 'Retrieving...';
-    try {
-      const res = await fetch(`${API}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password: pass })
-      });
-      const data = await res.json();
-      if (!res.ok) showErr('login-err', data.detail || 'Invalid credentials');
-      else { document.getElementById('login-key').textContent = data.api_key; result.classList.add('show'); }
-    } catch { showErr('login-err', 'Cannot connect to API'); }
-    btn.disabled = false; btn.textContent = 'Retrieve API Key';
-  }
+  btn.innerText =
+    AUTH_MODE === "register"
+    ? "Generating..."
+    : "Retrieving...";
 
-  function showErr(id, msg) {
-    const el = document.getElementById(id);
-    el.textContent = msg;
-    el.classList.add('show');
-  }
+  try{
 
-  function copy(id, btn) {
-    navigator.clipboard.writeText(document.getElementById(id).textContent).then(() => {
-      btn.textContent = 'Copied';
-      setTimeout(() => btn.textContent = 'Copy', 2000);
+    const res = await fetch(`${API}${endpoint}`, {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        email,
+        password
+      })
     });
+
+    const data = await res.json();
+
+    if(!res.ok){
+
+      document.getElementById("auth-error")
+        .innerText =
+        data.detail || "authentication failed";
+
+      return;
+    }
+
+    API_KEY = data.api_key;
+
+    localStorage.setItem(
+      "easycommerce_api_key",
+      API_KEY
+    );
+
+    document.getElementById("api-key")
+      .innerText = API_KEY;
+
+    document.getElementById("auth-success")
+      .style.display = "block";
+
+  }catch(err){
+
+    document.getElementById("auth-error")
+      .innerText =
+      "cannot connect to api";
+
   }
 
-  document.addEventListener('keydown', e => {
-    if (e.key !== 'Enter') return;
-    if (document.getElementById('tab-register').classList.contains('active')) register();
-    else login();
-  });
+  btn.disabled = false;
+
+  btn.innerText =
+    AUTH_MODE === "register"
+    ? "Generate API Key"
+    : "Retrieve API Key";
+}
+
+function copyKey(btn){
+
+  navigator.clipboard.writeText(API_KEY);
+
+  btn.innerText = "Copied";
+
+  setTimeout(() => {
+
+    btn.innerText = "Copy";
+
+  }, 1500);
+}
+
+function setQuery(q){
+
+  document.getElementById("query")
+    .value = q;
+}
+
+async function searchProducts(){
+
+  document.getElementById("search-error")
+    .innerText = "";
+
+  if(!API_KEY){
+
+    document.getElementById("search-error")
+      .innerText =
+      "generate api key first";
+
+    return;
+  }
+
+  const query =
+    document.getElementById("query")
+    .value
+    .trim();
+
+  if(!query){
+
+    document.getElementById("search-error")
+      .innerText =
+      "enter search query";
+
+    return;
+  }
+
+  document.getElementById("request-box")
+    .innerText =
+`POST /search
+
+{
+  "query":"${query}",
+  "limit":10
+}`;
+
+  const btn =
+    document.getElementById("search-btn");
+
+  btn.disabled = true;
+
+  btn.innerText = "Searching...";
+
+  try{
+
+    const res = await fetch(`${API}/search`, {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "x-api-key":API_KEY
+      },
+      body:JSON.stringify({
+        query,
+        limit:10
+      })
+    });
+
+    const data = await res.json();
+
+    document.getElementById("response-box")
+      .innerText =
+      JSON.stringify(data, null, 2);
+
+  }catch(err){
+
+    document.getElementById("response-box")
+      .innerText =
+`{
+  "error":"cannot connect to api"
+}`;
+
+  }
+
+  btn.disabled = false;
+
+  btn.innerText = "Search Products";
+}
+
+document.addEventListener("keydown", e => {
+
+  if(e.key === "Enter"){
+
+    searchProducts();
+
+  }
+
+});
+
 </script>
+
 </body>
 </html>
